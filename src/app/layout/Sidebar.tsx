@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuth } from "@/services/auth/useAuth";
 import {
     Search,
     Home,
@@ -13,9 +14,14 @@ import {
     Sun,
     Moon,
     CircleQuestionMark,
+    User,
+    CircleUser,
+    Settings,
+    UserPlus,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type Props = {
     collapsed: boolean;
@@ -23,9 +29,12 @@ type Props = {
 };
 
 export default function Sidebar({ collapsed, setCollapsed }: Props) {
+    const navigate = useNavigate();
     const { theme, setTheme } = useTheme();
 
     const [helpOpen, setHelpOpen] = useState(false);
+
+    const user = useAuth();
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -42,31 +51,90 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
         };
     }, [setCollapsed]);
 
+    const handleLogout = () => {
+        localStorage.removeItem("healthcare_user");
+        navigate('/login');
+    }
+
     return (
         <>
             <div
-                className={`h-screen flex flex-col  ${collapsed ? "w-[60px] transition-all duration-300" : "w-[260px] transition-all duration-300"
-                    } bg-white dark:bg-[#202020] text-gray-700 dark:text-gray-300`}
+                className={`h-screen flex flex-col ${collapsed ? "w-[60px] transition-all duration-300" : "w-[260px] transition-all duration-300"
+                    }  bg-[#f9f8f7] border-r border-gray-200 dark:border-[#302f2f] dark:bg-[#202020] text-gray-700 dark:text-gray-300`}
             >
-                <div className="px-3 py-3 flex items-center justify-between">
-                    {!collapsed && (
-                        <span className="text-sm font-medium">Clinical OS</span>
-                    )}
+                <div className="px-2 py-2 flex items-center justify-between group">
+                    <div className="hover:bg-[#f1f0ef] hover:dark:bg-[#252525] w-full rounded-md">
 
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <button
-                                onClick={() => setCollapsed(!collapsed)}
-                                className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white cursor-pointer"
-                            >
-                                {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-                            </button>
-                        </TooltipTrigger>
-                        <TooltipContent side={collapsed ? "right" : "top"} className="flex flex-col flex-nowrap items-start text-xs">
-                            <p>{collapsed ? "Expand sidebar" : "Close sidebar"}</p>
-                            <p>Ctrl+/</p>
-                        </TooltipContent>
-                    </Tooltip>
+                        {!collapsed && (
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <div className="flex items-center justify-between w-full cursor-pointer">
+                                        <Button variant="ghost" className="px-1">
+                                            {user?.name || "User"}
+                                        </Button>
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setCollapsed(!collapsed);
+                                                    }}
+                                                    className="text-gray-500 hover:bg-gray-200 hover:dark:bg-[#302f2f]"
+                                                >
+                                                    <ChevronLeft size={16} />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="right" className="text-xs">
+                                                <p>Close sidebar</p>
+                                                <p>Ctrl+/</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </PopoverTrigger>
+
+                                <PopoverContent align="start" className="w-80 border border-gray-300 dark:border-[#302f2f] p-0 gap-0  rounded-lg">
+                                    <div className="grid gap-4 bg-white dark:bg-[#252525] border-b border-gray-300 rounded-t-lg dark:border-[#302f2f] p-2">
+                                        <div className="flex items-center flex-nowrap gap-2 text-xs">
+                                            <CircleUser className="w-6 h-6 opacity-80 " />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm">{user?.name}'s Space</span>
+                                                <span className="text-[#777676]">{user?.email}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center flex-nowrap gap-2">
+                                            <Button className="flex items-center justify-center flex-nowrap border border-gray-300 dark:border-[#302f2f] bg-white dark:bg-[#252525] text-gray-400 dark:text-[#94918c] hover:bg-gray-100 hover:dark:bg-[#302f2f]  text-xs ">
+                                                <Settings className="max-w-3.5 max-h-3.5" /> Settings
+                                            </Button>
+                                            <Button className="flex items-center justify-center flex-nowrap border border-gray-300 dark:border-[#302f2f] bg-white hover:bg-gray-100 dark:bg-[#252525] text-[#94918c] hover:dark:bg-[#302f2f] text-xs">
+                                                <UserPlus className="max-w-3.5 max-h-3.5" />  Invite members
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="bg-white dark:bg-[#202020] rounded-b-lg p-2">
+                                        <Button onClick={handleLogout} className="w-full justify-start font-normal text-gray-700 dark:text-[#94918c] hover:bg-gray-100 dark:hover:bg-[#2a2a2a]">Logout</Button>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        )}
+
+                        {collapsed && (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        onClick={() => setCollapsed(!collapsed)}
+                                        className="text-gray-500 hover:bg-gray-200 hover:dark:bg-[#302f2f]"
+                                    >
+                                        <ChevronRight size={16} />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="right" className="text-xs">
+                                    <p>Expand sidebar</p>
+                                    <p>Ctrl+/</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
+                    </div>
                 </div>
 
                 <div className="px-2 pb-2">
@@ -82,17 +150,19 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                         <SidebarItem
                             icon={<Home size={16} />}
                             label="Home"
-                            active
+                            to="/home"
                             collapsed={collapsed}
                         />
                         <SidebarItem
                             icon={<Inbox size={16} />}
-                            label="Inbox"
+                            label="Analytics"
+                            to="/analytics"
                             collapsed={collapsed}
                         />
                         <SidebarItem
                             icon={<Library size={16} />}
-                            label="Library"
+                            label="Pateint Details"
+                            to="/patient-details"
                             collapsed={collapsed}
                         />
                     </div>
@@ -119,7 +189,7 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                     </Section>
                 </ScrollArea>
 
-                <div className="p-2 border-t border-gray-200 dark:border-gray-800 flex items-center flex-wrap gap-1">
+                <div className="p-2 border-t border-gray-200 dark:border-[#302f2f] flex items-center flex-wrap gap-1">
 
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -176,20 +246,28 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
 function SidebarItem({
     icon,
     label,
-    active,
+    to,
     collapsed,
 }: {
     icon: React.ReactNode;
     label: string;
-    active?: boolean;
     collapsed?: boolean;
+    to?: string;
 }) {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const isActive = to && location.pathname === to;
+
     return (
         <div
+            onClick={() => {
+                if (to) navigate(to);
+            }}
             className={`group flex items-center ${collapsed ? "justify-center" : "gap-2"
-                } px-2 py-1.5 rounded-md text-sm cursor-pointer ${active
-                    ? "bg-gray-100 dark:bg-[#2a2a2a] text-black dark:text-white"
-                    : "hover:bg-gray-100 dark:hover:bg-[#2a2a2a] text-gray-700 dark:text-gray-300"
+                } px-2 py-1.5 rounded-md text-sm cursor-pointer ${isActive
+                    ? "bg-[#f1f0ef] dark:bg-[#2a2a2a] text-black dark:text-white"
+                    : "hover:bg-[#f1f0ef] dark:hover:bg-[#2a2a2a] text-gray-700 dark:text-gray-300"
                 }`}
         >
             <span className="opacity-80">{icon}</span>
@@ -197,7 +275,6 @@ function SidebarItem({
         </div>
     );
 }
-
 function Section({
     title,
     children,

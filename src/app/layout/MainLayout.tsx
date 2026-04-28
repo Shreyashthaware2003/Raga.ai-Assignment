@@ -7,7 +7,7 @@ export default function MainLayout() {
     return (
         <div className="min-h-screen bg-gray-50 flex">
             <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
-            <main className="w-full bg-blue-400 dark:bg-red-500 p-2">
+            <main className="w-full dark:bg-[#191919] py-2 px-10">
                 <Outlet />
             </main>
         </div>

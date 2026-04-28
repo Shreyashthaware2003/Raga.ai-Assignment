@@ -49,10 +49,19 @@ export default function Login() {
                 });
             }
 
-            localStorage.setItem("healtcare_user", JSON.stringify(user));
+            const token = await user.getIdToken();
+
+            const userData = {
+                uid: user.uid,
+                email: user.email,
+                name: user.displayName,
+                token,
+            };
+
+            localStorage.setItem("healthcare_user", JSON.stringify(userData));
             toast.success("Logged in successfully");
 
-            navigate('/dashboard');
+            navigate('/home');
 
             // 👉 later: redirect to dashboard
         } catch (error: any) {

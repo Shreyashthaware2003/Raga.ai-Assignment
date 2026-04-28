@@ -12,3 +12,9 @@ body {
 :root {
   font-family: "Poppins", sans-serif;
 }
+
+@layer components {
+  .card-surface {
+    @apply bg-gray-100 dark:bg-[#252525] border border-gray-300 dark:border-[#302f2f];
+  }
+}

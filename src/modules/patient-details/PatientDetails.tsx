@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function DashboardLayout() {
+export default function PatientDetails() {
   return (
     <div>
-      ss
+      patient
     </div>
   )
 }
