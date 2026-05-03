@@ -5,8 +5,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useAuth } from "@/services/auth/useAuth";
 import {
     Search,
-    Home,
-    Inbox,
     Library,
     FileText,
     ChevronLeft,
@@ -14,10 +12,11 @@ import {
     Sun,
     Moon,
     CircleQuestionMark,
-    User,
     CircleUser,
     Settings,
     UserPlus,
+    ChartSpline,
+    ChartPie,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -27,6 +26,24 @@ type Props = {
     collapsed: boolean;
     setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+export const sidebarItems = [
+    {
+        label: "Overview",
+        icon: ChartPie,
+        to: "/dashboard",
+    },
+    {
+        label: "Analytics",
+        icon: ChartSpline,
+        to: "/dashboard/analytics",
+    },
+    {
+        label: "Patient Details",
+        icon: Library,
+        to: "/dashboard/patient-details",
+    },
+];
 
 export default function Sidebar({ collapsed, setCollapsed }: Props) {
     const navigate = useNavigate();
@@ -147,24 +164,19 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
 
                 <ScrollArea className="flex-1 px-2">
                     <div className="space-y-1">
-                        <SidebarItem
-                            icon={<Home size={16} />}
-                            label="Home"
-                            to="/home"
-                            collapsed={collapsed}
-                        />
-                        <SidebarItem
-                            icon={<Inbox size={16} />}
-                            label="Analytics"
-                            to="/analytics"
-                            collapsed={collapsed}
-                        />
-                        <SidebarItem
-                            icon={<Library size={16} />}
-                            label="Pateint Details"
-                            to="/patient-details"
-                            collapsed={collapsed}
-                        />
+                        {sidebarItems.map((item) => {
+                            const Icon = item.icon;
+
+                            return (
+                                <SidebarItem
+                                    key={item.label}
+                                    icon={<Icon size={16} />}
+                                    label={item.label}
+                                    to={item.to}
+                                    collapsed={collapsed}
+                                />
+                            );
+                        })}
                     </div>
 
                     <Section title="Recents" collapsed={collapsed}>

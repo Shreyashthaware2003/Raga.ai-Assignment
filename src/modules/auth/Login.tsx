@@ -61,7 +61,7 @@ export default function Login() {
             localStorage.setItem("healthcare_user", JSON.stringify(userData));
             toast.success("Logged in successfully");
 
-            navigate('/home');
+            navigate('/dashboard/home');
 
             // 👉 later: redirect to dashboard
         } catch (error: any) {

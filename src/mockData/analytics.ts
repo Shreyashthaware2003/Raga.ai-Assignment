@@ -77,10 +77,11 @@ export const dashboardStats: Stat[] = [
 // ---------------- ANALYTICS (MATCH SCALE) ----------------
 
 export const patientGrowth = [
-  { month: "Jan", patients: 85000 },
-  { month: "Feb", patients: 95000 },
+  { month: "Jan", patients: 95000 },
+  { month: "Feb", patients: 85000 },
   { month: "Mar", patients: 110000 },
   { month: "Apr", patients: TOTAL_PATIENTS },
+  { month: "May", patients: 123000 },
 ];
 
 export const visitsPerDay = [
@@ -89,6 +90,19 @@ export const visitsPerDay = [
   { day: "Wed", visits: 3800 },
   { day: "Thu", visits: 4500 },
   { day: "Fri", visits: 3900 },
+];
+
+export const departmentStats = [
+  { name: "Cardiology", patients: 24000 },
+  { name: "Orthopedics", patients: 18000 },
+  { name: "ICU", patients: 8000 },
+  { name: "General", patients: 42000 },
+];
+
+export const treatmentTime = [
+  { department: "Cardiology", avgDays: 5 },
+  { department: "Orthopedics", avgDays: 8 },
+  { department: "ICU", avgDays: 12 },
 ];
 
 // ---------------- SERVICES (API SIMULATION) ----------------
@@ -113,4 +127,14 @@ export const getPatientGrowth = async () => {
 export const getVisitsPerDay = async () => {
   await delay(400);
   return visitsPerDay;
+};
+
+export const getDepartmentStats = async () => {
+  await delay(400);
+  return departmentStats;
+};
+
+export const getTreatmentTime = async () => {
+  await delay(400);
+  return treatmentTime;
 };
