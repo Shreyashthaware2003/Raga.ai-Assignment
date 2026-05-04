@@ -1,4 +1,4 @@
-import  { useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -52,9 +52,8 @@ export default function Login() {
         <>
             <div className='flex flex-col flex-nowrap items-center justify-center flex-1 min-h-screen max-w-lg mx-auto px-4 gap-4'>
                 <div className='flex flex-col flex-nowrap items-center justify-center text-center mb-4'>
-                    <span>Clinical OS</span>
-                    <span className='text-xl font-bold'>Your Clinical Dashboard</span>
-                    <span className='text-2xl font-bold tracking-wide text-gray-400'>Log in to your Clinical Account</span>
+                    <span className='text-2xl font-bold tracking-wide'>Clinical OS</span>
+                    <span className='text-sm text-gray-400'>Log in to your Clinical Account</span>
                 </div>
                 <Card className='p-6 sm:p-8 w-full  shadow-lg border border-gray-300 ring-0'>
 
