@@ -83,6 +83,7 @@ export default function Sidebar({
 
     const handleLogout = async () => {
         await dispatch(logoutUser());
+        localStorage.clear();
         navigate("/login");
     };
 
