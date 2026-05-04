@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react'
-import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { useAppSelector } from '@/store/hooks';
+import { Navigate, Outlet } from 'react-router-dom';
 
 export default function ProtectedRoute() {
-    const user = localStorage.getItem("healthcare_user");
+    const { isAuthenticated, status } = useAppSelector((s) => s.auth);
 
-    if (!user) return <Navigate to="/login" />;
+    if (status === "loading" || status === "idle") return null;
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
 
-    return (
-        <>
-            <Outlet />
-        </>
-    )
+    return <Outlet />;
 }

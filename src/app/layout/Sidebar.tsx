@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/services/auth/useAuth";
+import { logoutUser } from "@/store/authActions";
+import { useAppDispatch } from "@/store/hooks";
 import {
     Search,
     Library,
@@ -46,6 +48,7 @@ export const sidebarItems = [
 ];
 
 export default function Sidebar({ collapsed, setCollapsed }: Props) {
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { theme, setTheme } = useTheme();
 
@@ -68,10 +71,11 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
         };
     }, [setCollapsed]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("healthcare_user");
-        navigate('/login');
-    }
+
+    const handleLogout = async () => {
+        await dispatch(logoutUser());
+        navigate("/login");
+    };
 
     return (
         <>

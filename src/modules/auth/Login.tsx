@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { CircleX, Eye, EyeClosed, Loader2 } from 'lucide-react';
-import { signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from '@/services/firebase';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { loginUser } from '@/store/authActions';
 
 export default function Login() {
 
@@ -19,63 +19,30 @@ export default function Login() {
 
     const navigate = useNavigate();
 
+    const dispatch = useAppDispatch();
+    const { error: authError, status } = useAppSelector((s) => s.auth);
+
     const handleContinue = async () => {
         const trimmedEmail = email.trim();
         const trimmedPassword = password.trim();
 
-        if (!trimmedEmail.includes('@')) {
-            setError('Please enter a valid email address');
+        if (!trimmedEmail.includes("@")) {
+            setError("Please enter a valid email address");
             return;
         }
 
         if (trimmedPassword.length < 6) {
-            setError('Password must be at least 6 characters long');
+            setError("Password must be at least 6 characters long");
             return;
         }
 
         try {
-            setLoading(true);
-            const userCredential = await signInWithEmailAndPassword(
-                auth,
-                trimmedEmail,
-                password
-            );
-
-            const user = userCredential.user;
-
-            if (!user.displayName) {
-                await updateProfile(user, {
-                    displayName: "Demo User",
-                });
-            }
-
-            const token = await user.getIdToken();
-
-            const userData = {
-                uid: user.uid,
-                email: user.email,
-                name: user.displayName,
-                token,
-            };
-
-            localStorage.setItem("healthcare_user", JSON.stringify(userData));
+            setError("");
+            await dispatch(loginUser(trimmedEmail, trimmedPassword));
             toast.success("Logged in successfully");
-
-            navigate('/dashboard/home');
-
-            // 👉 later: redirect to dashboard
-        } catch (error: any) {
+            navigate("/dashboard");
+        } catch {
             console.error(error);
-
-            if (error.code === "auth/user-not-found") {
-                setError("User not found");
-            } else if (error.code === "auth/wrong-password") {
-                setError("Incorrect password");
-            } else if (error.code === "auth/invalid-email") {
-                setError("Invalid email");
-            } else {
-                setError("Something went wrong");
-            }
         } finally {
             setLoading(false);
         }
@@ -131,11 +98,9 @@ export default function Login() {
                                 placeholder='Enter password' className='h-10 rounded-lg border-gray-200' />
                             <Button type='button' onClick={() => setVisible((prev) => !prev)} className='absolute right-1 inset-y-0 top-1/2 -translate-y-2 '>{visible ? <Eye /> : <EyeClosed />}</Button>
                         </div>
-                        <Button type='submit' disabled={loading} variant={'default'} className='bg-black hover:bg-black/80 text-white w-full h-10 mt-4'>{loading ? <Loader2 className='animate-spin' /> : 'Continue'}
+                        <Button type='submit' disabled={loading} variant={'default'} className='bg-black hover:bg-black/80 text-white w-full h-10 mt-4'> {status === "loading" ? <Loader2 className="animate-spin" /> : "Continue"}
                         </Button>
-                        {
-                            error && <p className='text-xs text-center text-red-500'>{error}</p>
-                        }
+                        {(error || authError) && <p className="text-xs text-center text-red-500">{error || authError}</p>}
                     </form>
                 </Card>
             </div >

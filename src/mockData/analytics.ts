@@ -18,7 +18,7 @@ export interface Patient {
 const conditions = ["Diabetes", "Hypertension", "Asthma", "Arthritis"];
 const doctors = ["Dr. Mehta", "Dr. Iyer", "Dr. Shah", "Dr. Patel"];
 
-// Keep this small for performance (UI rendering)
+// Keep it small for performance
 export const patients: Patient[] = Array.from({ length: 120 }, (_, i) => ({
   id: `P-${1000 + i}`,
   name: `Patient ${i + 1}`,

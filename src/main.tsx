@@ -4,13 +4,17 @@ import './index.css'
 import App from './App.tsx'
 import { ThemeProvider } from './components/theme-provider.tsx'
 import { TooltipProvider } from './components/ui/tooltip.tsx'
+import { Provider } from 'react-redux'
+import { store } from './store/index.ts'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider>
-      <TooltipProvider>
-        <App />
-      </TooltipProvider>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <TooltipProvider>
+          <App />
+        </TooltipProvider>
+      </ThemeProvider>
+    </Provider>
   </StrictMode>,
 )
