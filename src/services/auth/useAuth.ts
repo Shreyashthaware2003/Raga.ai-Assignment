@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useAppSelector } from "@/store/hooks";
 
 type StoredUser = {
     uid: string;
@@ -8,17 +8,18 @@ type StoredUser = {
 };
 
 export const useAuth = () => {
-    const [user, setUser] = useState<StoredUser | null>(null);
+    const { user, idToken } = useAppSelector((state) => state.auth);
 
-    useEffect(() => {
-        try {
-            const stored = localStorage.getItem("healthcare_user");
+    if (!user || !idToken) {
+        return null;
+    }
 
-            setUser(stored ? JSON.parse(stored) : null);
-        } catch {
-            setUser(null);
-        }
-    }, []);
+    const mappedUser: StoredUser = {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName,
+        token: idToken,
+    };
 
-    return user;
+    return mappedUser;
 };

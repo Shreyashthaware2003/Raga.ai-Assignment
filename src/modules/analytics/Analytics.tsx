@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   getDashboardStats, getPatientGrowth, getPatients, getVisitsPerDay, type Patient, type Stat, getDepartmentStats,
@@ -35,7 +35,7 @@ export default function Analytics() {
   const [stats, setStats] = useState<Stat[]>([]);
   const [growth, setGrowth] = useState<any[]>([]);
   const [visits, setVisits] = useState<any[]>([]);
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [_patients, setPatients] = useState<Patient[]>([]);
   const [department, setDepartment] = useState<any[]>([]);
   const [treatment, setTreatment] = useState<any[]>([]);
 
@@ -73,7 +73,10 @@ export default function Analytics() {
   return (
     <>
       <div className='flex flex-col gap-6'>
-        <h1 className='text-4xl font-bold'>Analytics</h1>
+        <div className='flex flex-col gap-1'>
+          <h1 className='text-4xl font-bold'>Analytics</h1>
+          <span>Track patient growth, visit patterns, and treatment insights from a single analytics dashboard.</span>
+        </div>
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center gap-4 w-full'>
           {
             stats.map((stat) => {
@@ -94,7 +97,6 @@ export default function Analytics() {
 
         </div>
 
-        {/* 🔹 CHARTS ROW */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           {/* Patient Growth */}
@@ -132,7 +134,6 @@ export default function Analytics() {
           </Card>
         </div>
 
-        {/* 🔹 NEW CHARTS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           {/* Department Distribution */}

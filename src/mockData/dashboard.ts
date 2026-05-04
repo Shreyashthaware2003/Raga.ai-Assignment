@@ -1,50 +1,53 @@
-import { Building2, Hospital, Users } from "lucide-react";
+import { BellRing, ChartSpline, ShieldCheck, Users } from "lucide-react";
 import { CalendarDays, Activity, Stethoscope } from "lucide-react";
 
 export const analyticsOptions = [
     {
-        title: 'Patient Analytics',
+        title: 'Analytics Overview',
         description:
-            'Individual patient health insights, vitals tracking, and treatment monitoring',
-        icon: Users,
-        href: `patient-details`,
+            'Track growth, visits, and treatment-time insights from a single analytics module',
+        icon: ChartSpline,
+        href: `analytics`,
         color: 'text-blue-600',
         bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+        cta: 'Open Analytics',
         features: [
-            'Vital Signs Tracking',
-            'Medical History',
-            'Treatment Plans',
-            'Risk Alerts',
+            'Patient Growth Trends',
+            'Visits Per Day',
+            'Department Distribution',
+            'Average Treatment Time',
         ],
     },
     {
-        title: 'Department Analytics',
+        title: 'Patient Registry',
         description:
-            'Department-level performance, patient flow, and operational efficiency',
-        icon: Building2,
-        href: `department-details`,
+            'Browse patient records with search and switch between grid and list views',
+        icon: Users,
+        href: `patient-details`,
         color: 'text-green-600',
         bgColor: 'bg-green-50 dark:bg-green-900/20',
+        cta: 'Open Patient Details',
         features: [
-            'Bed Occupancy Rate',
-            'Admission & Discharge Trends',
-            'Staff Utilization',
-            'Department KPIs',
+            'Grid/List Toggle',
+            'Responsive Patient Cards',
+            'Search by Name/ID/Doctor',
+            'Status Badges & Last Visit',
         ],
     },
     {
-        title: 'Hospital Analytics',
+        title: 'Auth & Alerts Demo',
         description:
-            'Hospital-wide insights, resource utilization, and strategic decision-making',
-        icon: Hospital,
-        href: `hospital-details`,
-        color: 'text-purple-600',
-        bgColor: 'bg-purple-50 dark:bg-purple-900/20',
+            'Firebase login/session flow with local notification trigger for critical patient alerts',
+        icon: BellRing,
+        href: `patient-details`,
+        color: 'text-amber-600',
+        bgColor: 'bg-amber-50 dark:bg-amber-900/20',
+        cta: 'Trigger Alerts',
         features: [
-            'Patient Flow Overview',
-            'Revenue & Billing Insights',
-            'Resource Allocation',
-            'Quality Metrics',
+            'Firebase Authentication',
+            'Protected Routes',
+            'Service Worker Registered',
+            'Local Notification Use Case',
         ],
     },
 ];
@@ -53,11 +56,11 @@ export const analyticsOptions = [
 
 export const healthcareUpcoming = {
     highlight: {
-        title: "AI Patient Monitoring",
+        title: "Role-Based Access Control",
         description:
-            "Track patient vitals in real-time and receive intelligent alerts for critical conditions.",
-        cta: "Enable Monitoring",
-        icon: Activity,
+            "Add role-specific access for Admin, Doctor, and Operations users across dashboard modules.",
+        cta: "Configure Roles",
+        icon: ShieldCheck,
     },
 
     items: [

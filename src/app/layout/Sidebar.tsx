@@ -6,11 +6,11 @@ import { useAuth } from "@/services/auth/useAuth";
 import { logoutUser } from "@/store/authActions";
 import { useAppDispatch } from "@/store/hooks";
 import {
-    Search,
     Library,
     FileText,
     ChevronLeft,
     ChevronRight,
+    X,
     Sun,
     Moon,
     CircleQuestionMark,
@@ -19,14 +19,18 @@ import {
     UserPlus,
     ChartSpline,
     ChartPie,
+    UserKey,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type Props = {
     collapsed: boolean;
     setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+    mobileOpen: boolean;
+    setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const sidebarItems = [
@@ -47,7 +51,12 @@ export const sidebarItems = [
     },
 ];
 
-export default function Sidebar({ collapsed, setCollapsed }: Props) {
+export default function Sidebar({
+    collapsed,
+    setCollapsed,
+    mobileOpen,
+    setMobileOpen,
+}: Props) {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { theme, setTheme } = useTheme();
@@ -77,13 +86,105 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
         navigate("/login");
     };
 
+    const closeMobile = () => setMobileOpen(false);
+
     return (
         <>
+            {mobileOpen && (
+                <button
+                    type="button"
+                    aria-label="Close menu overlay"
+                    onClick={closeMobile}
+                    className="fixed inset-0 z-40 bg-black/40 md:hidden"
+                />
+            )}
+
             <div
-                className={`h-screen flex flex-col ${collapsed ? "w-[60px] transition-all duration-300" : "w-[260px] transition-all duration-300"
+                className={`fixed left-0 top-0 z-50 h-screen w-[260px] transform transition-transform duration-300 md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+                    } flex flex-col bg-[#f9f8f7] border-r border-gray-200 dark:border-[#302f2f] dark:bg-[#202020] text-gray-700 dark:text-gray-300`}
+            >
+                <div className="px-2 py-2 flex items-center justify-between border-b border-gray-200 dark:border-[#302f2f]">
+                    <span className="text-sm font-semibold px-2">Menu</span>
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Close sidebar"
+                        onClick={closeMobile}
+                    >
+                        <X size={16} />
+                    </Button>
+                </div>
+
+                <SidebarBody
+                    collapsed={false}
+                    setCollapsed={setCollapsed}
+                    onSelectItem={closeMobile}
+                    handleLogout={handleLogout}
+                    helpOpen={helpOpen}
+                    setHelpOpen={setHelpOpen}
+                    theme={theme}
+                    setTheme={setTheme}
+                    userName={user?.name || "User"}
+                    userEmail={user?.email || ""}
+                    isMobile
+                    className="flex-1 min-h-0"
+                />
+            </div>
+
+            <div
+                className={`hidden md:flex h-screen flex-col ${collapsed ? "w-[60px] transition-all duration-300" : "w-[260px] transition-all duration-300"
                     }  bg-[#f9f8f7] border-r border-gray-200 dark:border-[#302f2f] dark:bg-[#202020] text-gray-700 dark:text-gray-300`}
             >
-                <div className="px-2 py-2 flex items-center justify-between group">
+                <SidebarBody
+                    collapsed={collapsed}
+                    setCollapsed={setCollapsed}
+                    onSelectItem={undefined}
+                    handleLogout={handleLogout}
+                    helpOpen={helpOpen}
+                    setHelpOpen={setHelpOpen}
+                    theme={theme}
+                    setTheme={setTheme}
+                    userName={user?.name || "User"}
+                    userEmail={user?.email || ""}
+                    isMobile={false}
+                    className="flex-1 min-h-0"
+                />
+            </div>
+        </>
+    );
+}
+
+function SidebarBody({
+    collapsed,
+    setCollapsed,
+    onSelectItem,
+    handleLogout,
+    helpOpen,
+    setHelpOpen,
+    theme,
+    setTheme,
+    userName,
+    userEmail,
+    isMobile,
+    className,
+}: {
+    collapsed: boolean;
+    setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+    onSelectItem?: () => void;
+    handleLogout: () => Promise<void>;
+    helpOpen: boolean;
+    setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    theme?: string;
+    setTheme: (theme: string) => void;
+    userName: string;
+    userEmail: string;
+    isMobile: boolean;
+    className?: string;
+}) {
+    return (
+        <div className={`flex min-h-0 flex-col ${className ?? ""}`}>
+            <div className="px-2 py-2 flex items-center justify-between group">
                     <div className="hover:bg-[#f1f0ef] hover:dark:bg-[#252525] w-full rounded-md">
 
                         {!collapsed && (
@@ -91,26 +192,28 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                                 <PopoverTrigger asChild>
                                     <div className="flex items-center justify-between w-full cursor-pointer">
                                         <Button variant="ghost" className="px-1">
-                                            {user?.name || "User"}
+                                            <CircleUser className="w-4 h-4" /> {userName}
                                         </Button>
 
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setCollapsed(!collapsed);
-                                                    }}
-                                                    className="text-gray-500 hover:bg-gray-200 hover:dark:bg-[#302f2f]"
-                                                >
-                                                    <ChevronLeft size={16} />
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="right" className="text-xs">
-                                                <p>Close sidebar</p>
-                                                <p>Ctrl+/</p>
-                                            </TooltipContent>
-                                        </Tooltip>
+                                        {!isMobile && (
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setCollapsed(!collapsed);
+                                                        }}
+                                                        className="text-gray-500 hover:bg-gray-200 hover:dark:bg-[#302f2f]"
+                                                    >
+                                                        <ChevronLeft size={16} />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent side="right" className="text-xs">
+                                                    <p>Close sidebar</p>
+                                                    <p>Ctrl+/</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        )}
                                     </div>
                                 </PopoverTrigger>
 
@@ -119,8 +222,8 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                                         <div className="flex items-center flex-nowrap gap-2 text-xs">
                                             <CircleUser className="w-6 h-6 opacity-80 " />
                                             <div className="flex flex-col">
-                                                <span className="text-sm">{user?.name}'s Space</span>
-                                                <span className="text-[#777676]">{user?.email}</span>
+                                                <span className="text-sm">{userName}'s Space</span>
+                                                <span className="text-[#777676]">{userEmail}</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center flex-nowrap gap-2">
@@ -133,13 +236,13 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                                         </div>
                                     </div>
                                     <div className="bg-white dark:bg-[#202020] rounded-b-lg p-2">
-                                        <Button onClick={handleLogout} className="w-full justify-start font-normal text-gray-700 dark:text-[#94918c] hover:bg-gray-100 dark:hover:bg-[#2a2a2a]">Logout</Button>
+                                        <Button onClick={handleLogout} className="w-full justify-start font-medium text-red-500 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]">Logout</Button>
                                     </div>
                                 </PopoverContent>
                             </Popover>
                         )}
 
-                        {collapsed && (
+                        {collapsed && !isMobile && (
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button
@@ -156,15 +259,7 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                             </Tooltip>
                         )}
                     </div>
-                </div>
-
-                <div className="px-2 pb-2">
-                    <SidebarItem
-                        icon={<Search size={16} />}
-                        label="Search"
-                        collapsed={collapsed}
-                    />
-                </div>
+            </div>
 
                 <ScrollArea className="flex-1 px-2">
                     <div className="space-y-1">
@@ -178,29 +273,29 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                                     label={item.label}
                                     to={item.to}
                                     collapsed={collapsed}
+                                    onSelectItem={onSelectItem}
                                 />
                             );
                         })}
                     </div>
 
-                    <Section title="Recents" collapsed={collapsed}>
+                    <Section title="Upcoming features" collapsed={collapsed}>
                         <SidebarItem
-                            icon={<FileText size={14} />}
-                            label="Networking"
+                            icon={<UserKey size={14} />}
+                            label="Role-Based Access Control"
                             collapsed={collapsed}
-                        />
-                        <SidebarItem
-                            icon={<FileText size={14} />}
-                            label="JavaScript Notes"
-                            collapsed={collapsed}
+                            disabledMessage="This module is under development and will be available soon."
+                            onSelectItem={onSelectItem}
                         />
                     </Section>
 
                     <Section title="Private" collapsed={collapsed}>
                         <SidebarItem
                             icon={<FileText size={14} />}
-                            label="React Notes"
+                            label="Patient Registry Notes"
                             collapsed={collapsed}
+                            disabledMessage="Private notes are not enabled in this demo build."
+                            onSelectItem={onSelectItem}
                         />
                     </Section>
                 </ScrollArea>
@@ -223,9 +318,12 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                                 <PopoverContent align="start" className="w-80 bg-white dark:bg-[#252525] border-2 dark:border-[#302f2f] ">
                                     <div className="grid gap-4">
                                         <div className="space-y-2">
-                                            <h4 className="leading-none font-medium">Dimensions</h4>
-                                            <p className="text-sm text-muted-foreground">
-                                                Set the dimensions for the layer.
+                                            <h4 className="leading-none font-medium">Help & Shortcuts</h4>
+                                            <p className="text-xs text-muted-foreground">
+                                                1. Use this workspace to review analytics, patient records, and alerts.
+                                            </p>
+                                            <p className="text-xs text-muted-foreground">
+                                                2. Press Ctrl + / to collapse or expand the sidebar.
                                             </p>
                                         </div>
                                     </div>
@@ -252,10 +350,7 @@ export default function Sidebar({ collapsed, setCollapsed }: Props) {
                         </TooltipContent>
                     </Tooltip>
                 </div>
-            </div>
-
-
-        </>
+        </div>
     );
 }
 
@@ -264,22 +359,37 @@ function SidebarItem({
     label,
     to,
     collapsed,
+    disabledMessage,
+    onSelectItem,
 }: {
     icon: React.ReactNode;
     label: string;
     collapsed?: boolean;
     to?: string;
+    disabledMessage?: string;
+    onSelectItem?: () => void;
 }) {
     const navigate = useNavigate();
     const location = useLocation();
 
     const isActive = to && location.pathname === to;
 
-    return (
+    const handleItemClick = () => {
+        if (to) {
+            navigate(to);
+            onSelectItem?.();
+            return;
+        }
+
+        if (disabledMessage) {
+            toast.error(disabledMessage);
+            onSelectItem?.();
+        }
+    };
+
+    const itemContent = (
         <div
-            onClick={() => {
-                if (to) navigate(to);
-            }}
+            onClick={handleItemClick}
             className={`group flex items-center ${collapsed ? "justify-center" : "gap-2"
                 } px-2 py-1.5 rounded-md text-sm cursor-pointer ${isActive
                     ? "bg-[#f1f0ef] dark:bg-[#2a2a2a] text-black dark:text-white"
@@ -289,6 +399,19 @@ function SidebarItem({
             <span className="opacity-80">{icon}</span>
             {!collapsed && <span className="truncate">{label}</span>}
         </div>
+    );
+
+    if (!collapsed) {
+        return itemContent;
+    }
+
+    return (
+        <Tooltip>
+            <TooltipTrigger asChild>{itemContent}</TooltipTrigger>
+            <TooltipContent side="right" className="text-xs">
+                <p>{label}</p>
+            </TooltipContent>
+        </Tooltip>
     );
 }
 function Section({

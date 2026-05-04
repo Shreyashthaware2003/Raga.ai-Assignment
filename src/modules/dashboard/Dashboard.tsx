@@ -1,4 +1,3 @@
-import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { analyticsOptions, healthcareUpcoming, } from '@/mockData/dashboard'
 import { ArrowRight, Calendars } from 'lucide-react';
@@ -18,7 +17,7 @@ function Dashboard() {
             <div className='flex flex-col gap-6 space-y-6'>
                 <div className='flex flex-col gap-1'>
                     <h1 className='text-4xl font-bold'>Dashboard Overview</h1>
-                    <span>Comprehensive patient, department, and hospital performance insights in one place</span>
+                    <span>Overview of implemented modules: analytics, patient registry, authentication, and alert demo</span>
                 </div>
                 <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20'>
                     {dashboardCards.map((option) => {
@@ -32,7 +31,7 @@ function Dashboard() {
                                     <CardTitle>{option.title}</CardTitle>
                                     <CardDescription>{option.description}</CardDescription>
                                 </CardHeader>
-                                <CardContent className="space-y-8">
+                                <CardContent className="space-y-8 relative">
                                     <div className="space-y-2">
                                         <p className="text-sm font-medium text-muted-foreground">Key Features:</p>
                                         <ul className="space-y-1">
@@ -46,10 +45,10 @@ function Dashboard() {
                                     </div>
                                     <Button
                                         onClick={() => navigate(option.href)}
-                                        className="w-full border border-gray-300 dark:border-[#302f2f] hover:bg-gray-200/50 dark:hover:bg-[#302f2f]/50"
+                                        className="w-full border border-gray-300 dark:border-[#302f2f] hover:bg-gray-200/50 dark:hover:bg-[#302f2f]/50 "
                                         variant="outline"
                                     >
-                                        View Dashboard
+                                        {option.cta ?? "Open Module"}
                                         <ArrowRight className="ml-2 h-4 w-4" />
                                     </Button>
                                 </CardContent>

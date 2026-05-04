@@ -1,49 +1,37 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useState } from "react";
-// import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { Menu } from "lucide-react";
 
 export default function MainLayout() {
     const [collapsed, setCollapsed] = useState(false);
-    const location = useLocation();
+    const [mobileOpen, setMobileOpen] = useState(false);
 
-    const pathnames = location.pathname.split("/").filter(Boolean);
-    console.log("Current Path:", pathnames);
     return (
         <div className="min-h-screen bg-gray-50 flex">
-            <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
-            <main className="w-full dark:bg-[#191919] py-4 px-10 space-y-10 max-h-screen overflow-y-auto">
-                {/* <div className="sticky top-0 z-50 bg-gray-50 dark:bg-[#191919] px-10 py-4 border-b">
-                    <Breadcrumb>
-                        <BreadcrumbList>
-                            {pathnames.map((name, index) => {
-                                const routeTo = "/" + pathnames.slice(0, index + 1).join("/");
-                                const isLast = index === pathnames.length - 1;
+            <Sidebar
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                mobileOpen={mobileOpen}
+                setMobileOpen={setMobileOpen}
+            />
+            <main className={`w-full dark:bg-[#191919] py-0 sm:py-4 px-4 md:px-10 space-y-6 md:space-y-10 max-h-screen overflow-y-auto`}>
+                <div className="sticky top-0 z-40 flex items-center gap-3 border-b border-gray-200 bg-gray-50/95 py-3 backdrop-blur md:hidden dark:border-[#302f2f] dark:bg-[#191919]/95">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        aria-label="Open menu"
+                        onClick={() => setMobileOpen(true)}
+                        className="border-gray-300 dark:border-[#302f2f]"
+                    >
+                        <Menu className="h-4 w-4" />
+                    </Button>
+                    <span className="text-sm font-semibold">Clinical OS</span>
+                </div>
 
-                                return (
-                                    <div key={routeTo} className="flex items-center">
-                                        <BreadcrumbItem>
-                                            <BreadcrumbLink asChild>
-                                                {isLast ? (
-                                                    <span className="capitalize font-medium text-white">
-                                                        {name.replace("-", " ")}
-                                                    </span>
-                                                ) : (
-                                                    <Link to={routeTo} className="capitalize">
-                                                        {name.replace("-", " ")}
-                                                    </Link>
-                                                )}
-                                            </BreadcrumbLink>
-                                        </BreadcrumbItem>
-
-                                        {!isLast && <BreadcrumbSeparator />}
-                                    </div>
-                                );
-                            })}
-                        </BreadcrumbList>
-                    </Breadcrumb>
-                </div> */}
-                <div className="flex-1  px-10 py-6 max-w-7xl mx-auto">
+                <div className="flex-1 px-0 md:px-10 py-4 md:py-6 max-w-7xl mx-auto">
                     <Outlet />
                 </div>
             </main>

@@ -14,6 +14,10 @@ import {
 import type { Patient, PatientStatus } from "@/mockData/analytics";
 import { LayoutGrid, List } from "lucide-react";
 
+import { BellRing } from "lucide-react";
+import { toast } from "sonner";
+import { sendLocalNotification } from "@/services/notifications";
+
 const statusStyles: Record<PatientStatus, string> = {
   Active: "bg-green-100 text-green-700 border-green-300 dark:bg-green-900/20 dark:text-green-300",
   Inactive:
@@ -33,13 +37,32 @@ export default function PatientDetails() {
     }
   }, [dispatch, status]);
 
+  const handleNotificationDemo = async () => {
+    const ok = await sendLocalNotification(
+      "Critical Patient Alert",
+      "Patient P-1024 requires immediate attention."
+    );
+
+    if (ok) {
+      toast.success("Notification triggered");
+    } else {
+      toast.error("Notification blocked or unsupported by this browser");
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-bold">Patient Details</h1>
-        <p className="text-muted-foreground">
-          Search and view patient records in grid or list mode.
-        </p>
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-4xl font-bold">Patient Details</h1>
+          <p className="text-muted-foreground">
+            Search and view patient records in grid or list mode.
+          </p>
+        </div>
+        <Button type="button" variant="destructive" className="border-none bg-red-600 text-white" onClick={handleNotificationDemo}>
+          <BellRing />
+          Trigger Alert
+        </Button>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

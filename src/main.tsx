@@ -6,6 +6,9 @@ import { ThemeProvider } from './components/theme-provider.tsx'
 import { TooltipProvider } from './components/ui/tooltip.tsx'
 import { Provider } from 'react-redux'
 import { store } from './store/index.ts'
+import { registerServiceWorker } from './services/notifications.ts'
+
+void registerServiceWorker();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
